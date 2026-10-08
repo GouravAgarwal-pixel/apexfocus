@@ -3,193 +3,543 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ApexFocus</title>
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ApexFocus - Pro Study Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #000000;
-      --card: #0B0F17;
-      --border: #1E293B;
-      --accent: #00F0FF;
-      --danger: #FF5E7E;
-      --text: #FFFFFF;
-      --muted: #94A3B8;
+      --bg-pure: #000000;
+      --card-bg: #07090E;
+      --card-elevated: #0D111A;
+      --border-subtle: #161D2A;
+      --border-glow: #1E293B;
+      --cyan-neon: #00F0FF;
+      --cyan-glow: rgba(0, 240, 255, 0.15);
+      --amber-neon: #FFB300;
+      --emerald-neon: #00E676;
+      --rose-neon: #FF3366;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #475569;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-    .app-shell { width: 100%; max-width: 440px; min-height: 100vh; background: var(--bg); display: flex; flex-direction: column; border-left: 1px solid var(--border); border-right: 1px solid var(--border); padding-bottom: 75px; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-pure); color: var(--text-primary); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
     
-    header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 20; }
-    .brand { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; }
-    .brand span { color: var(--accent); }
-    .streak-badge { background: #1C1204; border: 1px solid #78350F; color: #F59E0B; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+    .app-viewport { width: 100%; max-width: 440px; min-height: 100vh; background: var(--bg-pure); display: flex; flex-direction: column; border-left: 1px solid var(--border-subtle); border-right: 1px solid var(--border-subtle); position: relative; padding-bottom: 84px; }
 
-    .target-bar-wrap { padding: 12px 16px; border-bottom: 1px solid var(--border); }
-    .target-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
-    .progress-track { width: 100%; height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
-    .progress-fill { height: 100%; width: 45%; background: var(--accent); border-radius: 999px; }
+    /* Top Bar */
+    header { padding: 14px 18px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(12px); z-index: 50; }
+    .brand-group { display: flex; align-items: center; gap: 8px; }
+    .brand-logo { width: 28px; height: 28px; background: linear-gradient(135deg, var(--cyan-neon), #0072FF); border-radius: 7px; display: grid; place-items: center; font-weight: 900; font-size: 0.9rem; color: #000; }
+    .brand-title { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.5px; }
+    .brand-title span { color: var(--cyan-neon); }
 
-    .tabs-nav { display: flex; background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin: 16px; p: 2px; }
-    .tab-btn { flex: 1; padding: 8px; border: none; background: transparent; color: var(--muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: 0.2s; }
-    .tab-btn.active { background: var(--accent); color: #000; font-weight: 700; }
+    .streak-pill { background: rgba(255, 179, 0, 0.08); border: 1px solid rgba(255, 179, 0, 0.25); color: var(--amber-neon); padding: 5px 12px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; }
 
-    .content-panel { padding: 0 16px; flex: 1; display: none; }
-    .content-panel.active { display: block; }
+    /* Target Bar HUD */
+    .hud-target-strip { padding: 12px 18px; background: rgba(7, 9, 14, 0.6); border-bottom: 1px solid var(--border-subtle); }
+    .hud-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 7px; font-weight: 600; }
+    .hud-bar-bg { width: 100%; height: 6px; background: var(--border-subtle); border-radius: 999px; overflow: hidden; position: relative; }
+    .hud-bar-fill { height: 100%; width: 45%; background: linear-gradient(90deg, #0072FF, var(--cyan-neon)); border-radius: 999px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--cyan-neon); }
 
-    .timer-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px 16px; text-align: center; margin-bottom: 16px; }
-    .timer-display { font-size: 3.5rem; font-weight: 800; letter-spacing: -1px; margin: 12px 0; font-variant-numeric: tabular-nums; }
-    .controls { display: flex; gap: 10px; justify-content: center; }
-    .btn { padding: 12px 24px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; font-size: 0.9rem; }
-    .btn-primary { background: var(--accent); color: #000; }
-    .btn-secondary { background: var(--border); color: #FFF; }
-    .btn-danger { background: var(--danger); color: #FFF; }
+    /* Views Framework */
+    .main-view-container { flex: 1; display: flex; flex-direction: column; }
+    .view-pane { display: none; padding: 18px; animation: fadeIn 0.2s ease; }
+    .view-pane.active-pane { display: block; }
 
-    .input-field { width: 100%; background: #05080E; border: 1px solid var(--border); color: #FFF; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 12px; }
-    .video-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
-    .card-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    /* Focus Sub-Tabs Switcher */
+    .mode-switch-wrapper { display: flex; background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 3px; margin-bottom: 18px; }
+    .mode-switch-btn { flex: 1; padding: 9px; border: none; background: transparent; color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; cursor: pointer; border-radius: 9px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .mode-switch-btn.active { background: var(--cyan-neon); color: #000; box-shadow: 0 0 14px var(--cyan-glow); }
 
-    .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 440px; background: rgba(0,0,0,0.92); border-top: 1px solid var(--border); backdrop-filter: blur(8px); display: flex; justify-content: space-around; padding: 10px 0; z-index: 20; }
-    .nav-item { border: none; background: transparent; color: var(--muted); font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .nav-item.active { color: var(--accent); }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
+    /* Neo-Cards */
+    .neo-card { background: var(--card-bg); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 18px; margin-bottom: 16px; position: relative; }
+    .neo-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .card-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+    /* Obsidian Timer Box */
+    .timer-console { background: radial-gradient(circle at 50% 50%, #0E1626 0%, #05070B 100%); border: 1px solid var(--border-glow); border-radius: 20px; padding: 28px 16px; text-align: center; margin-bottom: 18px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .timer-status-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 700; color: var(--cyan-neon); background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.2); padding: 4px 10px; border-radius: 999px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; }
+    .timer-digits { font-size: 4.2rem; font-weight: 800; letter-spacing: -2px; font-family: 'JetBrains Mono', monospace; margin-bottom: 18px; color: #FFF; text-shadow: 0 0 20px rgba(0, 240, 255, 0.2); }
+    
+    .action-row { display: flex; gap: 10px; justify-content: center; }
+    .btn-action { padding: 12px 26px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-action:active { transform: scale(0.96); }
+    .btn-glow-cyan { background: var(--cyan-neon); color: #000; box-shadow: 0 0 20px var(--cyan-glow); }
+    .btn-ghost { background: var(--card-elevated); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+    .btn-danger { background: rgba(255, 51, 102, 0.1); color: var(--rose-neon); border: 1px solid rgba(255, 51, 102, 0.25); }
+
+    /* Inputs */
+    .dark-input { width: 100%; background: #030508; border: 1px solid var(--border-subtle); color: #FFF; padding: 12px 14px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 10px; outline: none; transition: 0.2s; }
+    .dark-input:focus { border-color: var(--cyan-neon); }
+
+    /* YouTube Box */
+    .video-viewport { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border-subtle); display: grid; place-items: center; color: var(--text-muted); font-size: 0.8rem; }
+
+    /* Notes Verification Container */
+    .snapshot-preview-box { width: 100%; min-height: 120px; border: 1px dashed var(--border-glow); border-radius: 12px; display: grid; place-items: center; padding: 12px; margin-bottom: 12px; text-align: center; }
+    .snapshot-img { width: 100%; max-height: 220px; object-fit: contain; border-radius: 8px; display: none; }
+
+    /* Brain Dump Notes */
+    .note-item { padding: 10px 12px; background: var(--card-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; margin-bottom: 8px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
+    .note-del { color: var(--rose-neon); cursor: pointer; font-weight: 700; padding: 2px 6px; }
+
+    /* Bottom Nav Dock */
+    .dock-navigation { position: fixed; bottom: 0; width: 100%; max-width: 440px; background: rgba(0, 0, 0, 0.94); border-top: 1px solid var(--border-subtle); backdrop-filter: blur(16px); display: flex; justify-content: space-around; padding: 10px 4px; z-index: 60; }
+    .dock-tab { border: none; background: transparent; color: var(--text-muted); font-size: 0.7rem; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; transition: 0.2s; }
+    .dock-icon { font-size: 1.25rem; }
+    .dock-tab.active-dock { color: var(--cyan-neon); }
+    .dock-tab.active-dock .dock-icon { filter: drop-shadow(0 0 8px var(--cyan-neon)); }
+
+    /* List Rows */
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); font-size: 0.85rem; }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-val { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
   </style>
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app-viewport">
+    
+    <!-- Top Bar -->
     <header>
-      <div class="brand">APEX<span>FOCUS</span></div>
-      <div class="streak-badge">🔥 <span id="streakCount">14</span> DAYS</div>
+      <div class="brand-group">
+        <div class="brand-logo">A</div>
+        <div class="brand-title">APEX<span>FOCUS</span></div>
+      </div>
+      <div class="streak-pill" id="hudStreak">
+        <span>🔥</span> <span id="streakNum">14</span> DAYS
+      </div>
     </header>
 
-    <div class="target-bar-wrap">
-      <div class="target-labels">
-        <span>Daily Target</span>
-        <span id="targetHours">4.5h / 10h</span>
+    <!-- Global Progress Bar -->
+    <div class="hud-target-strip">
+      <div class="hud-meta">
+        <span>DAILY BENCHMARK</span>
+        <span id="hudTargetRatio" style="font-family:'JetBrains Mono', monospace; color:var(--cyan-neon);">0.0h / 10.0h</span>
       </div>
-      <div class="progress-track"><div class="progress-fill"></div></div>
+      <div class="hud-bar-bg">
+        <div class="hud-bar-fill" id="hudProgressBar" style="width: 0%;"></div>
+      </div>
     </div>
 
-    <div class="tabs-nav">
-      <button class="tab-btn active" onclick="switchMode('study')">⚡ Self-Study</button>
-      <button class="tab-btn" onclick="switchMode('lecture')">🎥 Lecture Mode</button>
-    </div>
+    <!-- MAIN VIEWS -->
+    <main class="main-view-container">
 
-    <!-- Self Study View -->
-    <div id="studyView" class="content-panel active">
-      <div class="timer-card">
-        <div style="font-size: 0.8rem; color: var(--muted);">DEEP WORK POMODORO</div>
-        <div class="timer-display" id="studyTimer">50:00</div>
-        <div class="controls">
-          <button class="btn btn-primary" id="studyStartBtn" onclick="toggleTimer()">START</button>
-          <button class="btn btn-secondary" onclick="resetTimer()">RESET</button>
+      <!-- 1. FOCUS HUB (TIMER & STUDY) -->
+      <section id="view-focus" class="view-pane active-pane">
+        
+        <div class="mode-switch-wrapper">
+          <button class="mode-switch-btn active" id="modeBtnStudy" onclick="setFocusMode('study')">
+            ⚡ Self-Study
+          </button>
+          <button class="mode-switch-btn" id="modeBtnLecture" onclick="setFocusMode('lecture')">
+            🎥 Lecture Stream
+          </button>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-title">Brain Dump (Zero Distraction)</div>
-        <input type="text" class="input-field" id="brainDumpInput" placeholder="Quick thought / distraction note...">
-        <button class="btn btn-secondary" style="width: 100%; padding: 8px;" onclick="addNote()">Log Thought</button>
-        <ul id="noteList" style="list-style: none; margin-top: 10px; font-size: 0.8rem; color: var(--muted);"></ul>
-      </div>
-    </div>
+        <!-- Mode A: Self Study Console -->
+        <div id="sub-study" class="sub-panel active">
+          <div class="timer-console">
+            <div class="timer-status-chip" id="timerStatusLabel">● Deep Focus Standby</div>
+            <div class="timer-digits" id="timerDigits">50:00</div>
+            <div class="action-row">
+              <button class="btn-action btn-glow-cyan" id="btnTimerControl" onclick="handleTimerToggle()">Start Session</button>
+              <button class="btn-action btn-ghost" onclick="handleTimerReset()">Reset</button>
+            </div>
+          </div>
 
-    <!-- Lecture View -->
-    <div id="lectureView" class="content-panel">
-      <div class="card">
-        <div class="card-title">YouTube Study Stream</div>
-        <input type="text" class="input-field" id="ytUrl" placeholder="Paste YouTube Video Link...">
-        <button class="btn btn-secondary" style="width: 100%; padding: 8px; margin-bottom: 12px;" onclick="loadVideo()">Load Stream</button>
-        <div class="video-container" id="videoHolder">
-          <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.8rem;">Embed Stream Placeholder</div>
+          <div class="neo-card">
+            <div class="neo-card-header">
+              <span class="card-label">🧠 Brain Dump (Anti-Distraction)</span>
+            </div>
+            <input type="text" class="dark-input" id="dumpInput" placeholder="Write any interrupting thought..." onkeydown="if(event.key==='Enter') addDumpNote()">
+            <button class="btn-action btn-ghost" style="width:100%; justify-content:center; margin-bottom: 10px;" onclick="addDumpNote()">Save to Dump</button>
+            <div id="dumpList"></div>
+          </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-title">Physical Notes Verification</div>
-        <p style="font-size: 0.75rem; color: var(--muted); margin-bottom: 10px;">Mandatory snapshot required to record completed lecture hours.</p>
-        <input type="file" accept="image/*" capture="environment" class="input-field" style="padding: 6px;">
-      </div>
-    </div>
+        <!-- Mode B: Lecture Engine -->
+        <div id="sub-lecture" class="sub-panel">
+          <div class="neo-card">
+            <div class="neo-card-header">
+              <span class="card-label">📺 YouTube Integrated Feed</span>
+            </div>
+            <input type="text" class="dark-input" id="ytVideoUrl" placeholder="Paste YouTube lecture URL here...">
+            <button class="btn-action btn-glow-cyan" style="width:100%; justify-content:center; margin-bottom:12px;" onclick="mountYouTubePlayer()">Mount Video</button>
+            <div class="video-viewport" id="ytViewport">
+              No lecture stream mounted yet.
+            </div>
+          </div>
 
-    <nav class="bottom-nav">
-      <button class="nav-item active"><span>⏱️</span>Focus</button>
-      <button class="nav-item"><span>🎯</span>Targets</button>
-      <button class="nav-item"><span>⚔️</span>Arena</button>
-      <button class="nav-item"><span>👤</span>Profile</button>
+          <div class="neo-card">
+            <div class="neo-card-header">
+              <span class="card-label">📷 Physical Note Verification</span>
+              <span id="verifyBadge" style="font-size:0.68rem; font-weight:700; color:var(--rose-neon);">UNVERIFIED</span>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:10px;">
+              Snap your physical notebook pages to unlock and authenticate completed lecture hours.
+            </p>
+            <div class="snapshot-preview-box" id="snapBox">
+              <span id="snapPlaceholder" style="font-size:0.75rem; color:var(--text-muted);">No snapshot uploaded</span>
+              <img id="snapImg" class="snapshot-img" alt="Notebook Page">
+            </div>
+            <label class="btn-action btn-ghost" style="width:100%; justify-content:center; cursor:pointer;">
+              📸 Capture Note Snapshot
+              <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleImageSnap(event)">
+            </label>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 2. TARGETS VIEW -->
+      <section id="view-targets" class="view-pane">
+        <div class="neo-card">
+          <div class="neo-card-header">
+            <span class="card-label">🎯 Goal Configuration</span>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">
+            Set your target daily productive study volume.
+          </p>
+          <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+            <input type="number" id="goalInputHours" class="dark-input" style="margin-bottom:0;" value="10" min="1" max="18" step="0.5">
+            <span style="font-weight:700; font-size:0.9rem; color:var(--cyan-neon);">Hours</span>
+          </div>
+          <button class="btn-action btn-glow-cyan" style="width:100%; justify-content:center;" onclick="saveDailyGoal()">Update Target</button>
+        </div>
+
+        <div class="neo-card">
+          <div class="neo-card-header">
+            <span class="card-label">📊 Session Ledger</span>
+          </div>
+          <div class="metric-row">
+            <span style="color:var(--text-secondary);">Self-Study Logged</span>
+            <span class="metric-val" id="statStudyHours" style="color:var(--cyan-neon);">0.0h</span>
+          </div>
+          <div class="metric-row">
+            <span style="color:var(--text-secondary);">Lectures Logged</span>
+            <span class="metric-val" id="statLectureHours" style="color:var(--amber-neon);">0.0h</span>
+          </div>
+          <div class="metric-row">
+            <span style="color:var(--text-secondary);">Total Net Focus</span>
+            <span class="metric-val" id="statTotalHours" style="color:var(--emerald-neon);">0.0h</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. ARENA VIEW -->
+      <section id="view-arena" class="view-pane">
+        <div class="neo-card">
+          <div class="neo-card-header">
+            <span class="card-label">⚔️ Daily Combat Arena</span>
+            <span style="font-size:0.68rem; color:var(--emerald-neon); font-family:'JetBrains Mono';">LIVE POOL</span>
+          </div>
+          <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:14px;">
+            Ranked by authentic verified study hours logged today.
+          </p>
+          <div class="metric-row">
+            <span>🥇 1. EliteAspirant_99</span>
+            <span class="metric-val" style="color:var(--amber-neon);">11.4h</span>
+          </div>
+          <div class="metric-row" style="background:rgba(0, 240, 255, 0.04); border-radius:8px; padding:10px 8px;">
+            <span>⚡ 2. You (Gourav)</span>
+            <span class="metric-val" id="arenaYouHours" style="color:var(--cyan-neon);">0.0h</span>
+          </div>
+          <div class="metric-row">
+            <span>🥉 3. CA_RankerTarget</span>
+            <span class="metric-val">5.8h</span>
+          </div>
+          <div class="metric-row">
+            <span>4. NightScholar</span>
+            <span class="metric-val">4.2h</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. PROFILE VIEW -->
+      <section id="view-profile" class="view-pane">
+        <div class="neo-card">
+          <div class="neo-card-header">
+            <span class="card-label">👤 Aspirant Credentials</span>
+          </div>
+          <div class="metric-row">
+            <span style="color:var(--text-secondary);">Focus Discipline</span>
+            <span class="metric-val" style="color:var(--emerald-neon);">Active Ranker</span>
+          </div>
+          <div class="metric-row">
+            <span style="color:var(--text-secondary);">Current Streak</span>
+            <span class="metric-val" id="profileStreak" style="color:var(--amber-neon);">14 Days</span>
+          </div>
+          <div class="metric-row">
+            <span style="color:var(--text-secondary);">Storage Standard</span>
+            <span class="metric-val">On-Device LocalStorage</span>
+          </div>
+        </div>
+
+        <button class="btn-action btn-danger" style="width:100%; justify-content:center;" onclick="clearAllData()">
+          Reset Local Database
+        </button>
+      </section>
+
+    </main>
+
+    <!-- BOTTOM DOCK NAVIGATION -->
+    <nav class="dock-navigation">
+      <button class="dock-tab active-dock" onclick="navigateToTab('focus', this)">
+        <span class="dock-icon">⏱️</span>
+        <span>Focus</span>
+      </button>
+      <button class="dock-tab" onclick="navigateToTab('targets', this)">
+        <span class="dock-icon">🎯</span>
+        <span>Targets</span>
+      </button>
+      <button class="dock-tab" onclick="navigateToTab('arena', this)">
+        <span class="dock-icon">⚔️</span>
+        <span>Arena</span>
+      </button>
+      <button class="dock-tab" onclick="navigateToTab('profile', this)">
+        <span class="dock-icon">👤</span>
+        <span>Profile</span>
+      </button>
     </nav>
+
   </div>
 
   <script>
-    let timerInterval = null;
-    let secondsLeft = 50 * 60;
-    let isRunning = false;
+    /* --- STATE MANAGEMENT & LOCAL STORAGE --- */
+    const STORAGE_KEY = 'apexfocus_db_v2';
+    let appState = {
+      targetHours: 10,
+      loggedMinutes: 0,
+      lectureMinutes: 0,
+      streak: 14,
+      dumpNotes: [],
+      verifiedNotes: false
+    };
 
-    function formatTime(secs) {
-      const m = Math.floor(secs / 60).toString().padStart(2, '0');
-      const s = (secs % 60).toString().padStart(2, '0');
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try { appState = Object.assign(appState, JSON.parse(saved)); } catch(e){}
+      }
+      renderUI();
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      renderUI();
+    }
+
+    /* --- AUDIO BEEP ENGINE (Zero External Files) --- */
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // 880 Hz
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch(e){}
+    }
+
+    /* --- TIMER LOGIC --- */
+    let timerDuration = 50 * 60;
+    let timerRemaining = 50 * 60;
+    let timerActive = false;
+    let timerInterval = null;
+
+    function formatDigits(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
       return `${m}:${s}`;
     }
 
-    function toggleTimer() {
-      const btn = document.getElementById('studyStartBtn');
-      if (isRunning) {
+    function handleTimerToggle() {
+      const btn = document.getElementById('btnTimerControl');
+      const label = document.getElementById('timerStatusLabel');
+
+      if (timerActive) {
         clearInterval(timerInterval);
-        isRunning = false;
-        btn.innerText = 'RESUME';
+        timerActive = false;
+        btn.innerText = 'Resume';
+        btn.classList.remove('btn-danger');
+        btn.classList.add('btn-glow-cyan');
+        label.innerText = '● Paused';
+        label.style.color = 'var(--amber-neon)';
       } else {
-        isRunning = true;
-        btn.innerText = 'PAUSE';
+        timerActive = true;
+        btn.innerText = 'Pause';
+        btn.classList.remove('btn-glow-cyan');
+        btn.classList.add('btn-danger');
+        label.innerText = '● Deep Focus Active';
+        label.style.color = 'var(--cyan-neon)';
+
         timerInterval = setInterval(() => {
-          if (secondsLeft > 0) {
-            secondsLeft--;
-            document.getElementById('studyTimer').innerText = formatTime(secondsLeft);
+          if (timerRemaining > 0) {
+            timerRemaining--;
+            document.getElementById('timerDigits').innerText = formatDigits(timerRemaining);
+            // Log 1 second
+            if (timerRemaining % 60 === 0) {
+              appState.loggedMinutes += 1;
+              saveState();
+            }
           } else {
             clearInterval(timerInterval);
-            isRunning = false;
-            alert('Session Completed! Great focus.');
+            timerActive = false;
+            playBeepSound();
+            alert('Apex Focus: Session complete! Great deep work.');
+            handleTimerReset();
           }
         }, 1000);
       }
     }
 
-    function resetTimer() {
+    function handleTimerReset() {
       clearInterval(timerInterval);
-      isRunning = false;
-      secondsLeft = 50 * 60;
-      document.getElementById('studyTimer').innerText = '50:00';
-      document.getElementById('studyStartBtn').innerText = 'START';
+      timerActive = false;
+      timerRemaining = timerDuration;
+      document.getElementById('timerDigits').innerText = formatDigits(timerRemaining);
+      const btn = document.getElementById('btnTimerControl');
+      btn.innerText = 'Start Session';
+      btn.classList.remove('btn-danger');
+      btn.classList.add('btn-glow-cyan');
+      const label = document.getElementById('timerStatusLabel');
+      label.innerText = '● Deep Focus Standby';
+      label.style.color = 'var(--cyan-neon)';
     }
 
-    function switchMode(mode) {
-      const buttons = document.querySelectorAll('.tab-btn');
-      buttons[0].classList.toggle('active', mode === 'study');
-      buttons[1].classList.toggle('active', mode === 'lecture');
-      document.getElementById('studyView').classList.toggle('active', mode === 'study');
-      document.getElementById('lectureView').classList.toggle('active', mode === 'lecture');
+    /* --- TAB SWITCHING (Bottom Nav & Sub-tabs) --- */
+    function navigateToTab(tabId, el) {
+      document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active-pane'));
+      document.querySelectorAll('.dock-tab').forEach(t => t.classList.remove('active-dock'));
+      
+      const targetPane = document.getElementById('view-' + tabId);
+      if (targetPane) targetPane.classList.add('active-pane');
+      if (el) el.classList.add('active-dock');
     }
 
-    function loadVideo() {
-      const url = document.getElementById('ytUrl').value;
-      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-      const match = url.match(regExp);
+    function setFocusMode(mode) {
+      const isStudy = mode === 'study';
+      document.getElementById('modeBtnStudy').classList.toggle('active', isStudy);
+      document.getElementById('modeBtnLecture').classList.toggle('active', !isStudy);
+      document.getElementById('sub-study').classList.toggle('active', isStudy);
+      document.getElementById('sub-lecture').classList.toggle('active', !isStudy);
+    }
+
+    /* --- YOUTUBE INTEGRATION --- */
+    function mountYouTubePlayer() {
+      const url = document.getElementById('ytVideoUrl').value.trim();
+      const reg = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(reg);
       if (match && match[2].length === 11) {
-        document.getElementById('videoHolder').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${match[2]}" frameborder="0" allowfullscreen></iframe>`;
+        document.getElementById('ytViewport').innerHTML = 
+          `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${match[2]}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
       } else {
-        alert('Invalid YouTube URL');
+        alert('Please enter a valid YouTube video URL');
       }
     }
 
-    function addNote() {
-      const input = document.getElementById('brainDumpInput');
-      if (!input.value.trim()) return;
-      const list = document.getElementById('noteList');
-      const li = document.createElement('li');
-      li.style.padding = '4px 0';
-      li.style.borderBottom = '1px solid #1E293B';
-      li.innerText = `• ${input.value}`;
-      list.appendChild(li);
-      input.value = '';
+    /* --- PHYSICAL NOTES SNAPSHOT --- */
+    function handleImageSnap(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('snapImg');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          document.getElementById('snapPlaceholder').style.display = 'none';
+          
+          appState.verifiedNotes = true;
+          document.getElementById('verifyBadge').innerText = 'VERIFIED';
+          document.getElementById('verifyBadge').style.color = 'var(--emerald-neon)';
+          saveState();
+        };
+        reader.readAsDataURL(file);
+      }
     }
+
+    /* --- BRAIN DUMP NOTES --- */
+    function addDumpNote() {
+      const input = document.getElementById('dumpInput');
+      const txt = input.value.trim();
+      if (!txt) return;
+      appState.dumpNotes.push(txt);
+      input.value = '';
+      saveState();
+    }
+
+    function removeDumpNote(idx) {
+      appState.dumpNotes.splice(idx, 1);
+      saveState();
+    }
+
+    /* --- TARGET SETTINGS --- */
+    function saveDailyGoal() {
+      const val = parseFloat(document.getElementById('goalInputHours').value);
+      if (val > 0) {
+        appState.targetHours = val;
+        saveState();
+        alert(`Target successfully updated to ${val} hours!`);
+      }
+    }
+
+    function clearAllData() {
+      if (confirm('Are you sure you want to reset all local metrics?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        appState = { targetHours: 10, loggedMinutes: 0, lectureMinutes: 0, streak: 14, dumpNotes: [], verifiedNotes: false };
+        saveState();
+      }
+    }
+
+    /* --- RENDER COMPLETE UI --- */
+    function renderUI() {
+      const totalHours = ((appState.loggedMinutes + appState.lectureMinutes) / 60).toFixed(1);
+      const targetHours = appState.targetHours.toFixed(1);
+      const ratio = Math.min(100, Math.round((totalHours / targetHours) * 100));
+
+      // HUD Update
+      document.getElementById('hudTargetRatio').innerText = `${totalHours}h / ${targetHours}h`;
+      document.getElementById('hudProgressBar').style.width = `${ratio}%`;
+      document.getElementById('streakNum').innerText = appState.streak;
+      document.getElementById('profileStreak').innerText = `${appState.streak} Days`;
+
+      // Targets Pane Stats
+      document.getElementById('statStudyHours').innerText = `${(appState.loggedMinutes / 60).toFixed(1)}h`;
+      document.getElementById('statLectureHours').innerText = `${(appState.lectureMinutes / 60).toFixed(1)}h`;
+      document.getElementById('statTotalHours').innerText = `${totalHours}h`;
+      document.getElementById('goalInputHours').value = appState.targetHours;
+
+      // Arena Update
+      document.getElementById('arenaYouHours').innerText = `${totalHours}h`;
+
+      // Notes Render
+      const container = document.getElementById('dumpList');
+      container.innerHTML = '';
+      appState.dumpNotes.forEach((note, idx) => {
+        const item = document.createElement('div');
+        item.className = 'note-item';
+        item.innerHTML = `<span>${note}</span><span class="note-del" onclick="removeDumpNote(${idx})">✕</span>`;
+        container.appendChild(item);
+      });
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', loadState);
   </script>
 </body>
 </html>
